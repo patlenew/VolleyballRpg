@@ -256,10 +256,10 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - Color_013ea87eba494ac2b5107f65f2ce8b50: {r: 0, g: 0.9394503, b: 1, a: 1}
+    - Color_013ea87eba494ac2b5107f65f2ce8b50: {r: 0.23713954, g: 0.662118, b: 0.6886792, a: 1}
     - Color_03d5a2c6a79c470385616b6c18d3bdaa: {r: 0, g: 0.42510697, b: 1, a: 1}
     - Color_19ab1fc1df2a4536aec158e4f329ee34: {r: 0, g: 0.5407866, b: 1, a: 1}
-    - Color_7cb320e0e0b94506883db8e92af0a758: {r: 0.78773576, g: 0.9114305, b: 1, a: 0}
+    - Color_7cb320e0e0b94506883db8e92af0a758: {r: 0.6179246, g: 0.8366816, b: 1, a: 1}
     - Vector2_066c8c974ce648df8b7df4021ca3b9e0: {r: 35, g: 35, b: 0, a: 0}
     - Vector2_07e392d4b10e4f7a84899987810c9400: {r: -0.2, g: 0.1, b: 0, a: 0}
     - Vector2_5d69f0f7a5b24e96a0f0cf1d412e52c3: {r: 0.1, g: 0, b: 0, a: 0}
