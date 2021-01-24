@@ -1,18 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TO DO: Probably create teams randomly
 public class BoardTeam : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField] private BoardCharacter _boardCharacters;
+    [SerializeField] private BoardTeamData _currentData;
+    [SerializeField] private DeckData _deck;
 }

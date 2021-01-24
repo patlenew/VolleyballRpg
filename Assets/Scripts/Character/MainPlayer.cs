@@ -4,12 +4,23 @@ using UnityEngine;
 
 public class MainPlayer : MonoBehaviour
 {
+    [SerializeField] private BoardTeam _currentTeam;
+
     private int _currentHp;
     private int _currentCardTurns;
 
-    public void SetBaseData(CharacterStatData data)
+    public void SetBaseData(BoardTeamData data)
     {
-        _currentHp = data.baseHp;
-        _currentCardTurns = data.baseCardTurns;
+        _currentHp = data.baseBallPower;
+        _currentCardTurns = data.baseReflex;
     }
+
+    #region Helpers
+
+    public BoardTeam GetTeam()
+    {
+        return _currentTeam;
+    }
+
+    #endregion
 }

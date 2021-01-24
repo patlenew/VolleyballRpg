@@ -201,9 +201,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tileRef: {fileID: 8792948278928579339, guid: 36cc4f5f6d5751f4a951462a21db0d24, type: 3}
-  _boardRef: {fileID: 0}
-  _localBoardHelper: {fileID: 0}
-  _enemyBoardHelper: {fileID: 0}
+  _boardRef: {fileID: 8245276045388307488, guid: f50d8d8626b5eca4c89865e12fe235da, type: 3}
+  _localBoardHelper: {fileID: 761029670}
+  _enemyBoardHelper: {fileID: 2095889005}
 --- !u!1 &181452265
 GameObject:
   m_ObjectHideFlags: 0

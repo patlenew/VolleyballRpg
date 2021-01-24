@@ -11,6 +11,7 @@ public class BoardGrid : MonoBehaviour
     [SerializeField] private Transform _cameraHelper;
 
     private bool _init;
+    private BoardTeam _team;
     private BoardTile[,] _tiles;
     private BoardSettings _settings;
 
@@ -19,6 +20,18 @@ public class BoardGrid : MonoBehaviour
     public void SetSettings(BoardSettings settings)
     {
         _settings = settings;
+    }
+
+    public void SetTeam(BoardTeam team)
+    {
+        _team = team;
+
+        AssignTeamStartPosition();
+    }
+
+    private void AssignTeamStartPosition()
+    {
+
     }
 
     public void SpawnTiles()

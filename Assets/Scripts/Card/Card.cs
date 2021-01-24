@@ -1,18 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
+// To keep in mind: maybe have different card per class if there also multiple "classes"
 public class Card : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Image _cardImage;
+    [SerializeField] private TMP_Text _descriptionTitle;
 
-    // Update is called once per frame
-    void Update()
+    private CardData _data;
+
+    public void SetData(CardData data)
     {
-        
+        _data = data;
+
+        _cardImage.sprite = data.GetCardSprite();
+        _descriptionTitle.text = data.GetDescription();
     }
 }
