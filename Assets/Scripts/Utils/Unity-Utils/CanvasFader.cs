@@ -33,6 +33,13 @@ public class CanvasFader : MonoBehaviour
         _currentFadeCoroutine = StartCoroutine(FadeCoroutine(1f, _showDuration));
     }
 
+    public void Show_Instant()
+    {
+        StopFadeCoroutine();
+
+        CanvasGroup.alpha = 1f;
+    }
+
     private IEnumerator FadeCoroutine(float goal, float duration)
     {
         float t = 0f;
@@ -58,6 +65,13 @@ public class CanvasFader : MonoBehaviour
         StopFadeCoroutine();
 
         _currentFadeCoroutine = StartCoroutine(FadeCoroutine(0f, _hideDuration));
+    }
+
+    public void Hide_Instant()
+    {
+        StopFadeCoroutine();
+
+        CanvasGroup.alpha = 0f;
     }
 
     private void StopFadeCoroutine()

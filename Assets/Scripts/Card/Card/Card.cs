@@ -19,4 +19,15 @@ public class Card : MonoBehaviour
         _cardImage.sprite = data.GetCardSprite();
         _descriptionTitle.text = data.GetDescription();
     }
+
+    // TO ADD: Draw/Discard Anim
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
 }

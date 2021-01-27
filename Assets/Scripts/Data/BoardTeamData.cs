@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using MyBox;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Board Team Data", menuName = "VolleyBall RPG/Board Team Data", order = 1)]

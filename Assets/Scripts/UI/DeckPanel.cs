@@ -12,6 +12,7 @@ public class DeckPanel : MonoBehaviour
 
     private DeckData _data;
     private Stack<Card> _cards = new Stack<Card>();
+    private List<Card> _cardsInHand = new List<Card>();
     private List<Card> _discardedCards = new List<Card>();
 
     private void OnReceiveDeckData(DeckData data)
@@ -26,14 +27,28 @@ public class DeckPanel : MonoBehaviour
 
     }
 
+    public void ClearHand()
+    {
+        _cardsInHand.Clear();
+    }
+
+    // TO ADD: Reshuffle when hand empty
+    // Check limit Card
     public void Draw(int count)
     {
         for (int i = 0; i < count; i++)
         {
-            
+            _cardsInHand.Add(_cards.Pop());
         }
     }
 
+    public void AdjustHand()
+    {
+        for (int i = 0; i < _cardsInHand.Count; i++)
+        {
+            
+        }
+    }
 
     #region Helpers
 
