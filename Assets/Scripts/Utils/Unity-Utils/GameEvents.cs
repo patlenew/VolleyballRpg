@@ -7,6 +7,8 @@ using UnityEngine;
 public static class GameEvents
 {
     public static GameEvent<BattleSettings> OnStartFight = new GameEvent<BattleSettings>();
+
+    public static GameEvent OnEndTurn = new GameEvent();
 }
 
 public class GameEvent

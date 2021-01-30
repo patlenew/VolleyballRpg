@@ -44,9 +44,15 @@ public class DeckPanel : MonoBehaviour
 
     public void AdjustHand()
     {
+        float step = 45f / _cardsInHand.Count;
+        float angle = step;
+
         for (int i = 0; i < _cardsInHand.Count; i++)
         {
-            
+            Transform cardTransform = _cardsInHand[i].transform;
+            cardTransform.SetLocalEulerAngleZ(angle);
+
+            angle += step;
         }
     }
 

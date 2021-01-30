@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class BattleBoardHandler : MonoBehaviour
@@ -12,6 +13,7 @@ public class BattleBoardHandler : MonoBehaviour
 
     // Could be part of team settings, to see
     [Header("Base Game Settings")]
+    [SerializeField] private int _goalPoint = 20;
 
     [Header("Board Settings")]
     [SerializeField] private Transform _localBoardHelper;
@@ -19,10 +21,14 @@ public class BattleBoardHandler : MonoBehaviour
 
     [Header("Ball Settings")]
     [SerializeField] private Transform _ballNetGoal;
+    [SerializeField] private Transform _ball;
 
+    private int _playerScore;
+    private int _enemyScore;
     private BoardGrid _playerGrid;
     private BoardGrid _enemyGrid;
-    
+    private BattleSettings _battleSettings;
+
     private void Start()
     {
         GameEvents.OnStartFight.Register(OnStartBattle);
@@ -40,17 +46,30 @@ public class BattleBoardHandler : MonoBehaviour
         // Make player (local team) start for now
         // Turn takes current team data, and add/removes stats according to modifiers
 
+        _playerScore = 0;
+        _enemyScore = 0;
+
         PrepareBoards(battleSettings);
+
+        // Prepare Turn
+        _turnHandler.PrepareTurns();
     }
+
+    #region Prepare Board
 
     private void PrepareBoards(BattleSettings battleSettings)
     {
         CleanBoard();
 
-        transform.position = battleSettings.battlePoint;
+        _battleSettings = battleSettings;
 
-        InitBoardForLocal(battleSettings.localBoardSettings, battleSettings.LocalTeam);
-        InitBoardForEnemy(battleSettings.enemyBoardSettings, battleSettings.EnemyTeam);
+        transform.position = _battleSettings.battlePoint;
+
+        InitBoardForLocal(_battleSettings.localBoardSettings, _battleSettings.LocalTeam);
+        InitBoardForEnemy(_battleSettings.enemyBoardSettings, _battleSettings.EnemyTeam);
+
+        _battleSettings.Local.Hide();
+        _battleSettings.Enemy.Hide();
     }
 
     public void InitBoardForLocal(BoardSettings settings, BoardTeam team)
@@ -67,6 +86,8 @@ public class BattleBoardHandler : MonoBehaviour
 
     private void CleanBoard()
     {
+        if (_playerGrid == null || _enemyGrid == null) return;
+
         _playerGrid.Clean();
         _enemyGrid.Clean();
 
@@ -77,11 +98,44 @@ public class BattleBoardHandler : MonoBehaviour
         _enemyGrid = null;
     }
 
+    #endregion
+
+    #region Turn Related
+
+    private void OnEndTurn()
+    {
+
+    }
+
+    #endregion
+
+    #region Ball
+
+    private void MoveBallToMiddle()
+    {
+        _ball.DOMove(_ballNetGoal.position, 1f);
+    }
+
+    private void SetBallGoal(BoardGrid grid)
+    {
+        BoardTile goalTile = grid.GetRandomTileForBall();
+    }
+
+    #endregion
+
+
+    private void OnCompleteBattle()
+    {
+        _battleSettings.Local.Show();
+    }
+
     #region Helpers
 
     private BoardGrid CreateGrid(Transform parent, BoardSettings settings)
     {
         BoardGrid board = Instantiate(_boardRef, parent);
+        board.transform.localPosition = Vector3.zero;
+
         board.SetSettings(settings);
         board.SpawnTiles();
 
@@ -95,6 +149,9 @@ public class BattleSettings
 {
     public Vector3 battlePoint;
 
+    public MainPlayer Local { private set; get; }
+    public WorldEnemy Enemy { private set; get; }
+
     public BoardTeam LocalTeam { private set; get; }
     public BoardTeam EnemyTeam { private set; get; }
 
@@ -103,6 +160,9 @@ public class BattleSettings
 
     public BattleSettings(MainPlayer local, WorldEnemy enemy)
     {
+        Local = local;
+        Enemy = enemy;
+
         LocalTeam = local.GetTeam();
         EnemyTeam = enemy.GetTeam();
     }

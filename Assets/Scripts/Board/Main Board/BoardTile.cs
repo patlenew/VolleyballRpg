@@ -4,15 +4,31 @@ using UnityEngine;
 
 public class BoardTile : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private bool _ballGoal;
+    private BoardCharacter _character;
+
+    public void SetActive(bool active)
     {
-        
+        gameObject.SetActive(active);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetCharacter(BoardCharacter character)
     {
-        
+        _character = character;
+    }
+
+    public void SetBallHighlight(bool ballGoal)
+    {
+        _ballGoal = ballGoal;
+    }
+
+    public bool IsEmpty()
+    {
+        return _character != null;
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.position;
     }
 }

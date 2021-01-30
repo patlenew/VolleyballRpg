@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class BoardGrid : MonoBehaviour
 {
+    [Header("Characters Related")]
+    [SerializeField] private BoardCharacter _characterRef;
+    [SerializeField] private Transform _charactersParent;
+
     [Header("Tiles Related")]
     [SerializeField] private Transform _tileParent;
 
@@ -14,6 +19,8 @@ public class BoardGrid : MonoBehaviour
     private BoardTeam _team;
     private BoardTile[,] _tiles;
     private BoardSettings _settings;
+
+    private List<BoardCharacter> _boardCharacters = new List<BoardCharacter>();
 
     #region Init
 
@@ -31,7 +38,35 @@ public class BoardGrid : MonoBehaviour
 
     private void AssignTeamStartPosition()
     {
+        _boardCharacters.Clear();
 
+        _tiles.Copy(out BoardTile[,] shuffledTiles);
+
+        shuffledTiles.ShuffleGrid();
+
+        int characterIndex = 0;
+
+        for (int i = 0; i < shuffledTiles.GetLength(0); i++)
+        {
+            for (int j = 0; j < shuffledTiles.GetLength(1); j++)
+            {
+                BoardCharacter character = CreateBoardCharacter(shuffledTiles[i, j], _team.GetCharactersData()[characterIndex]);
+
+                _boardCharacters.Add(character);
+
+                characterIndex++;
+
+                if (characterIndex >= _team.GetCharactersData().Length)
+                {
+                    break;
+                }
+            }
+
+            if (characterIndex >= _team.GetCharactersData().Length)
+            {
+                break;
+            }
+        }
     }
 
     public void SpawnTiles()
@@ -47,12 +82,24 @@ public class BoardGrid : MonoBehaviour
                 float scaleZ = tile.transform.GetScaleZ();
 
                 tile.transform.localPosition = new Vector3(i * scaleX, 0f, j * scaleZ);
+                tile.SetActive(true);
 
                 _tiles[i, j] = tile;
             }
         }
 
         _init = true;
+    }
+
+    private BoardCharacter CreateBoardCharacter(BoardTile tile, BoardCharacterData data)
+    {
+        BoardCharacter character = Instantiate(_characterRef, _charactersParent);
+        character.Init(data);
+        character.SetTile(tile);
+
+        tile.SetCharacter(character);
+
+        return character;
     }
 
     #endregion
@@ -71,4 +118,16 @@ public class BoardGrid : MonoBehaviour
 
         _tiles = null;
     }
+
+    #region Helpers
+
+    public BoardTile GetRandomTileForBall()
+    {
+        BoardTile tile = _tiles.RandomElement();
+        tile.SetBallHighlight(true);
+
+        return tile;
+    }
+
+    #endregion
 }

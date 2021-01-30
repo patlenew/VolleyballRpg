@@ -7,12 +7,17 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private WorldEnemy _enemy;
     [SerializeField] private BoardSettings _localBoardSettings;
     [SerializeField] private BoardSettings _enemyBoardSettings;
-    [SerializeField] private Transform _battlePoint;
 
-    private void Start()
+    // TO IMPLEMENT, try to find an available battle point around where the fight was declared on the world
+    [SerializeField] private Transform _battlePoint; 
+
+    private void Update()
     {
-        // Test
-        StartFight();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            // Test
+            StartFight();
+        }
     }
 
     private void StartFight()
