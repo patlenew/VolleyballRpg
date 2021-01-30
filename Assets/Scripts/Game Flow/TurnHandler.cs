@@ -45,9 +45,6 @@ public class TurnHandler : MonoBehaviour
 
     private void OnEndTurn()
     {
-
-
-        GameEvents.
     }
 }
 
