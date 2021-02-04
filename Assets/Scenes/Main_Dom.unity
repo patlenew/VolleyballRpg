@@ -256,8 +256,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tileRef: {fileID: 0}
   _boardRef: {fileID: 0}
+  _turnHandler: {fileID: 0}
+  _goalPoint: 20
   _localBoardHelper: {fileID: 0}
   _enemyBoardHelper: {fileID: 0}
+  _ballNetGoal: {fileID: 0}
+  _ball: {fileID: 0}
 --- !u!1 &126095448
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,6 +538,102 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181452265}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &182350642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 182350646}
+  - component: {fileID: 182350645}
+  - component: {fileID: 182350644}
+  - component: {fileID: 182350643}
+  m_Layer: 0
+  m_Name: Quad
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!64 &182350643
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182350642}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &182350644
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182350642}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 257
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7e90f9c66446b014e8ee8caa905d4c5e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &182350645
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182350642}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &182350646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182350642}
+  m_LocalRotation: {x: 0.03608506, y: -0.605364, z: 0.027489407, w: 0.7946551}
+  m_LocalPosition: {x: -6.96174, y: 16.33, z: 8.05769}
+  m_LocalScale: {x: 1, y: 1.5, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 5.2, y: -794.6, z: 0}
 --- !u!1 &199658978
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,7 +1014,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 402013010}
-  - component: {fileID: 402013009}
   - component: {fileID: 402013008}
   m_Layer: 0
   m_Name: Box Volume
@@ -940,34 +1039,21 @@ MonoBehaviour:
     albedo: {r: 1, g: 1, b: 1, a: 1}
     meanFreePath: 10
     anisotropy: 0
-    volumeMask: {fileID: 11700000, guid: 8486279bff508d54da44434c59c33ae5, type: 2}
+    volumeMask: {fileID: 11700000, guid: b801db6a614891a4f8fb8b29e24418de, type: 3}
     textureScrollingSpeed: {x: 0, y: 0, z: 0}
     textureTiling: {x: 1, y: 1, z: 1}
-    positiveFade: {x: 0.20799999, y: 0.20799999, z: 0.20799999}
-    negativeFade: {x: 0.20799999, y: 0.20799999, z: 0.20799999}
-    m_EditorUniformFade: 5.2
+    positiveFade: {x: 0, y: 0, z: 0}
+    negativeFade: {x: 0, y: 0, z: 0}
+    m_EditorUniformFade: 0
     m_EditorPositiveFade: {x: 0, y: 0, z: 0}
     m_EditorNegativeFade: {x: 0, y: 0, z: 0}
     m_EditorAdvancedFade: 0
-    size: {x: 25, y: 25, z: 25}
+    size: {x: 1, y: 1, z: 1}
     invertFade: 0
     distanceFadeStart: 10000
     distanceFadeEnd: 10000
     textureIndex: -1
     textureOffset: {x: 0, y: 0, z: 0}
---- !u!65 &402013009
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 402013007}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &402013010
 Transform:
   m_ObjectHideFlags: 0
@@ -2414,6 +2500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1321383509}
   - component: {fileID: 1321383508}
+  - component: {fileID: 1321383510}
   m_Layer: 0
   m_Name: PostProcessVolume
   m_TagString: Untagged
@@ -2446,12 +2533,44 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1321383507}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.1751804, y: 19.21, z: -54.450073}
+  m_LocalPosition: {x: 0, y: 9.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1321383510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1321383507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1fbb15bf92b84f40a1eb030765b5afe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 2
+  parameters:
+    albedo: {r: 1, g: 1, b: 1, a: 1}
+    meanFreePath: 10
+    anisotropy: 0
+    volumeMask: {fileID: 11700000, guid: ae739ad1f7f4f3b46a8e33381e649f54, type: 3}
+    textureScrollingSpeed: {x: 0, y: 0, z: 1}
+    textureTiling: {x: 1, y: 1, z: 1}
+    positiveFade: {x: 0, y: 0, z: 0}
+    negativeFade: {x: 0, y: 0, z: 0}
+    m_EditorUniformFade: 1.5
+    m_EditorPositiveFade: {x: 0, y: 0, z: 0}
+    m_EditorNegativeFade: {x: 0, y: 0, z: 0}
+    m_EditorAdvancedFade: 1
+    size: {x: 3, y: 3, z: 3}
+    invertFade: 0
+    distanceFadeStart: 9997.94
+    distanceFadeEnd: 10000
+    textureIndex: -1
+    textureOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &1335272205
 GameObject:
   m_ObjectHideFlags: 0

@@ -71,6 +71,40 @@ public class Texture3DGenerator : MonoBehaviour
         return texture;
     }
 
+    [ContextMenu("Generate Texture 32x32x32")]
+    public Texture2D GenerateTexture32x32x32()
+    {
+        int3 sizes = 32;
+        Texture2D texture = new Texture2D(sizes.x * sizes.z, sizes.y, TextureFormat.ARGB32, false);
+        NativeArray<Color> outputs = new NativeArray<Color>(sizes.x * sizes.y * sizes.z, Allocator.TempJob);
+        NativeArray<Noise> nativeNoises = new NativeArray<Noise>(noises, Allocator.TempJob);
+
+        new RenderTexture()
+        {
+            noises = nativeNoises,
+            outputs = outputs,
+            sizes = sizes,
+            is3D = true
+        }.Schedule(outputs.Length, 64).Complete();
+
+        //z is img count
+        for (int z = 0; z < sizes.z; z++)
+        {
+            for (int x = 0; x < sizes.x; x++)
+            {
+                for (int y = 0; y < sizes.y; y++)
+                {
+                    int index = to1D(new int3(x, y, z), sizes);
+                    texture.SetPixel(x + (sizes.x * z), y, outputs[index]);
+                }
+            }
+        }
+        outputs.Dispose();
+        nativeNoises.Dispose();
+
+        return texture;
+    }
+
 
     public enum NoiseType { Worley, CNoise, SNoise}
     

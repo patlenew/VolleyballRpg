@@ -22,6 +22,10 @@ public class Texture3DGeneratorEditor : Editor
         {
             SaveTextureAsAsset(generator.GenerateTexture3D());
         }
+        if (GUILayout.Button("Generate Texture 32x32x32"))
+        {
+            SaveTextureAsPNG(generator.GenerateTexture32x32x32());
+        }
     }
 
     public void SaveTextureAsPNG(Texture2D texture)
