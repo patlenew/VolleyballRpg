@@ -14,6 +14,11 @@ public class ReflexBuffCardData : CardData
     {
         return reflexIncrease;
     }
+
+    public override int GetReflexCost()
+    {
+        return 0;
+    }
 }
 
 public enum StatType

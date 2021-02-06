@@ -28,6 +28,8 @@ public abstract class CardData : ScriptableObject
     }
 
     public abstract int GetBaseValue();
+
+    public abstract int GetReflexCost();
 }
 
 public class DrawCardOption

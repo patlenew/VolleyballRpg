@@ -2,80 +2,85 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 // TO VALIDATE: should this be a mono beheavior?
 public class TurnHandler : MonoBehaviour
 {
-    private Turn _localTurn;
-    private Turn _enemyTurn;
-
+    private TurnOwner _currentTurnOwner;
     private Turn _currentTurn;
 
-    private void Start()
+    public void PrepareFirstTurn()
     {
+        bool localStart = Random.Range(0, 2) == 1;
 
+        _currentTurnOwner = localStart ? TurnOwner.Local : TurnOwner.Enemy;
     }
 
-    private void OnDestroy()
+    public void PrepareTurn(int startReflex, Action onStartTurn, Action onCompleteTurn)
     {
-
+        _currentTurn = TurnUtils.CreateTurn(startReflex, _currentTurnOwner, onStartTurn, onCompleteTurn);
     }
 
-    public void PrepareTurns()
+    public void StartTurn()
     {
-
-    }
-
-    private void StartCameraTransition()
-    {
-        CameraManager.Instance.MoveTo(_currentTurn.CameraHelper.position, 1f);
+        _currentTurn.OnStartTurn();
     }
 
     public void SetNextTurn()
     {
         bool playerTurn = _currentTurn.IsPlayerTurn();
 
-        _currentTurn = playerTurn ? _enemyTurn : _localTurn;
+        // Switch Turn
+        _currentTurnOwner = playerTurn ? TurnOwner.Enemy : TurnOwner.Local;
     }
 
-    private void OnUseCard(int reflexChange)
+    public void OnUseCard(int reflexChange)
     {
         _currentTurn.OnUseCard(reflexChange);
     }
 
-    private void OnEndTurn()
+    #region Helpers
+
+    public TurnOwner GetCurrentTurnOwner()
     {
+        return _currentTurnOwner;
     }
+
+    #endregion
+}
+
+public enum TurnOwner
+{
+    None = 0,
+
+    Local = 1,
+    Enemy = 2
 }
 
 public class Turn
 {
     public int ReflexRemaining { private set; get; }
-    public Transform CameraHelper { private set; get; }
 
-    private bool _playerTurn;
+    private TurnOwner _owner;
+    private Action _onStartTurn;
     private Action _onEndTurn;
-    private BoardTeamData _data;
 
-    public Turn(int startReflex, bool playerTurn)
+    public Turn(int startReflex, TurnOwner owner)
     {
         ReflexRemaining = startReflex;
-        _playerTurn = playerTurn;
+
+        _owner = owner;
     }
 
-    public void ResetTurn()
+    public void OnStartTurn()
     {
-        // Maybe we can have card that adds more reflex for the next turn
-        ReflexRemaining += _data.baseReflex;
+        _onStartTurn.Invoke();
     }
 
-    public void SetCameraHelper(Transform cameraHelper)
+    public void SetCallbacks(Action onStartTurn, Action onEndTurn)
     {
-        CameraHelper = cameraHelper;
-    }
-
-    public void SetEndTurnCallback(Action onEndTurn)
-    {
+        _onStartTurn = onStartTurn;
         _onEndTurn = onEndTurn;
     }
 
@@ -91,6 +96,17 @@ public class Turn
 
     public bool IsPlayerTurn()
     {
-        return _playerTurn;
+        return _owner == TurnOwner.Local;
+    }
+}
+
+public static class TurnUtils
+{
+    public static Turn CreateTurn(int startReflex, TurnOwner owner, Action onStartTurn, Action onCompleteTurn)
+    {
+        Turn turn = new Turn(startReflex, owner);
+        turn.SetCallbacks(onStartTurn, onCompleteTurn);
+
+        return turn;
     }
 }

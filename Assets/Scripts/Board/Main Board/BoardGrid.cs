@@ -121,12 +121,27 @@ public class BoardGrid : MonoBehaviour
 
     #region Helpers
 
+    public BoardSettings GetSettings()
+    {
+        return _settings;
+    }
+
+    public BoardTeamData GetTeamData()
+    {
+        return _team.GetTeamData();
+    }
+
     public BoardTile GetRandomTileForBall()
     {
         BoardTile tile = _tiles.RandomElement();
         tile.SetBallHighlight(true);
 
         return tile;
+    }
+
+    public Transform GetCameraHelper()
+    {
+        return _cameraHelper;
     }
 
     #endregion

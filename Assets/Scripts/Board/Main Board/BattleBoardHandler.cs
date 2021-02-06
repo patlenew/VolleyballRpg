@@ -32,11 +32,13 @@ public class BattleBoardHandler : MonoBehaviour
     private void Start()
     {
         GameEvents.OnStartFight.Register(OnStartBattle);
+        GameEvents.OnUseCard.Register(OnUseCard);
     }
 
     private void OnDestroy()
     {
         GameEvents.OnStartFight.Remove(OnStartBattle);
+        GameEvents.OnUseCard.Remove(OnUseCard);
     }
 
     private void OnStartBattle(BattleSettings battleSettings)
@@ -51,8 +53,13 @@ public class BattleBoardHandler : MonoBehaviour
 
         PrepareBoards(battleSettings);
 
+        GameEvents.SpriteHUD_Show.Invoke(typeof(HUD_DeckPanel));
+        GameEvents.PrepareDeck.Invoke(battleSettings.Local.GetTeam().GetDeckData());
+
         // Prepare Turn
-        _turnHandler.PrepareTurns();
+        _turnHandler.PrepareFirstTurn();
+
+        PrepareTurn();
     }
 
     #region Prepare Board
@@ -102,9 +109,61 @@ public class BattleBoardHandler : MonoBehaviour
 
     #region Turn Related
 
+    private void PrepareTurn()
+    {
+        // Transition & Start Next Turn
+        _turnHandler.PrepareTurn(GetBaseReflex(), GetStartTurnAction(), GetEndTurnAction());
+
+        TransitionToNextTurn(GetCameraHelper());
+    }
+
+    private void TransitionToNextTurn(Transform cameraHelper)
+    {
+        CameraManager.Instance.MoveTo(cameraHelper, 1f, OnTransitionToTeamComplete);
+    }
+
+    private void OnTransitionToTeamComplete()
+    {
+        StartTurn();
+    }
+
+    private void StartTurn()
+    {
+        _turnHandler.StartTurn();
+    }
+
+    private void OnStartTurnLocal()
+    {
+        GameEvents.OnStartTurn_Local.Invoke();
+    }
+
+    private void OnStartTurnEnemy()
+    {
+        // Allo!!!
+
+        Debug.Log("Ses ma tour");
+
+        StartCoroutine(DelayTestEnemyTurn());
+    }
+
+    private IEnumerator DelayTestEnemyTurn()
+    {
+        yield return new WaitForSeconds(1f);
+
+        Debug.Log("Ses fini ma tour");
+        OnEndTurn();
+    }
+
+    private void OnUseCard(CardData cardData)
+    {
+        _turnHandler.OnUseCard(cardData.GetReflexCost());
+    }
+
     private void OnEndTurn()
     {
+        _turnHandler.SetNextTurn();
 
+        PrepareTurn();
     }
 
     #endregion
@@ -131,6 +190,38 @@ public class BattleBoardHandler : MonoBehaviour
 
     #region Helpers
 
+    private Action GetStartTurnAction()
+    {
+        Action action = null;
+
+        if (_turnHandler.GetCurrentTurnOwner() == TurnOwner.Local)
+        {
+            action = OnStartTurnLocal;
+        }
+        else
+        {
+            action = OnStartTurnEnemy;
+        }
+
+        return action;
+    }
+
+    private Action GetEndTurnAction()
+    {
+        Action action = null;
+
+        if (_turnHandler.GetCurrentTurnOwner() == TurnOwner.Local)
+        {
+            action = OnEndTurn;
+        }
+        else
+        {
+            action = OnEndTurn;
+        }
+
+        return action;
+    }
+
     private BoardGrid CreateGrid(Transform parent, BoardSettings settings)
     {
         BoardGrid board = Instantiate(_boardRef, parent);
@@ -140,6 +231,16 @@ public class BattleBoardHandler : MonoBehaviour
         board.SpawnTiles();
 
         return board;
+    }
+
+    private Transform GetCameraHelper()
+    {
+        return _turnHandler.GetCurrentTurnOwner() == TurnOwner.Local ? _playerGrid.GetCameraHelper() : _enemyGrid.GetCameraHelper();
+    }
+
+    private int GetBaseReflex()
+    {
+        return _turnHandler.GetCurrentTurnOwner() == TurnOwner.Local ? _playerGrid.GetTeamData().baseReflex : _enemyGrid.GetTeamData().baseReflex;
     }
 
     #endregion

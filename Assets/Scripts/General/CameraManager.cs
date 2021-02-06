@@ -6,12 +6,25 @@ using UnityEngine;
 // TODO: Follow the main player in the world
 public class CameraManager : Singleton<CameraManager>
 {
+    public Transform SpriteHudHelper => _spriteHudHelper;
+
     [SerializeField] private Transform _cameraParent;
+    [SerializeField] private Transform _spriteHudHelper;
 
     private Camera camera => Camera.main;
 
-    public void MoveTo(Vector3 goal, float duration, TweenCallback onComplete = null)
+    protected override void Init_Awake()
     {
-        _cameraParent.DOMove(goal, duration).OnComplete(onComplete ?? null);
+        base.Init_Awake();
+
+        camera.transform.SetParent(transform);
+        camera.transform.localPosition = Vector3.zero;
+        camera.transform.localRotation = Quaternion.identity;
+    }
+
+    public void MoveTo(Transform goal, float duration, TweenCallback onComplete = null)
+    {
+        _cameraParent.DORotateQuaternion(goal.rotation, duration);
+        _cameraParent.DOMove(goal.position, duration).OnComplete(onComplete ?? null);
     }
 }

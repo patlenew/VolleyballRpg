@@ -14,5 +14,10 @@ public class MovementCardData : CardData
     {
         return _movementGrant;
     }
+
+    public override int GetReflexCost()
+    {
+        return -1;
+    }
 }
 

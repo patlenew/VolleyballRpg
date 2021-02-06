@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c61216efb462844897b2012f796ed7, type: 3}
   m_Name: Power Reflex Buff Card Data
   m_EditorClassIdentifier: 
-  _cardSprite: {fileID: 21300000, guid: 9fd2c3ca652c83144b350b4bc4dd2963, type: 3}
+  _cardSprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
   _description: Give Extra Reflex, Destroy for Game
   _destroyAfterPlay: 1
   _makeDraw: 0

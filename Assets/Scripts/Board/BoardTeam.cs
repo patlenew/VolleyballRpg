@@ -14,4 +14,14 @@ public class BoardTeam : MonoBehaviour
     {
         return _boardCharacters;
     }
+
+    public BoardTeamData GetTeamData()
+    {
+        return _currentData;
+    }
+
+    public DeckData GetDeckData()
+    {
+        return _deck;
+    }
 }

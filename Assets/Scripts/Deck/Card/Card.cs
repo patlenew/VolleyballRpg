@@ -7,7 +7,7 @@ using UnityEngine.UI;
 // To keep in mind: maybe have different card per class if there also multiple "classes"
 public class Card : MonoBehaviour
 {
-    [SerializeField] private Image _cardImage;
+    [SerializeField] private SpriteRenderer _cardImage;
     [SerializeField] private TMP_Text _descriptionTitle;
 
     private CardData _data;
