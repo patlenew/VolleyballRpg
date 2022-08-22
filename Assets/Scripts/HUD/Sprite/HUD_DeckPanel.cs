@@ -11,6 +11,7 @@ public class HUD_DeckPanel : SpriteHUDPanel
     [SerializeField] private Transform _cardParent;
 
     private int _startCardCount = 5; // for Test
+    private Card _selectedCard;
     private DeckData _data;
     private Stack<Card> _cards = new Stack<Card>();
     private List<Card> _cardsInHand = new List<Card>();
@@ -49,6 +50,14 @@ public class HUD_DeckPanel : SpriteHUDPanel
         Draw(_startCardCount);
     }
 
+    private void HideHand()
+    {
+        for (int i = 0; i < _cardsInHand.Count; i++)
+        {
+            _cardsInHand[i].Hide();
+        }
+    }
+
     public void ClearHand()
     {
         _cardsInHand.Clear();
@@ -75,36 +84,92 @@ public class HUD_DeckPanel : SpriteHUDPanel
         float step = 45f / _cardsInHand.Count;
         float angle = step;
 
-        // Test very uglu
+        // Test very uglu, to beautify
         for (int i = 0; i < _cardsInHand.Count; i++)
         {
-            //_cardsInHand[i].transform.SetLocalEulerAngleZ(angle);
+            Vector3 offset = _cardsInHand[i].transform.localScale;
+            offset.y = 0f;
+            offset.z = 0f;
 
-            Vector3 offset = _cardsInHand[i].transform.localPosition;
+            offset *= i;
 
-            offset.z += offsetBetweenCards.z;
+            _cardsInHand[i].transform.localPosition += offset;
+        }
+    }
 
-            if (i > _cardsInHand.Count / 2)
+    #region Interaction
+
+    private void Update()
+    {
+        UpdateHoverInteraction();
+
+        if (_selectedCard != null)
+        {
+            UpdateClickInteraction();
+        }
+    }
+
+    #region Hovering
+
+    private void UpdateHoverInteraction()
+    {
+        Ray ray = CameraManager.Instance.camera.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Card card = hit.transform.GetComponent<Card>();
+
+            if (card != null)
             {
-                offset.x -= offsetBetweenCards.x;
+                if (card == _selectedCard) return;
+
+                CleanSelectedCard();
+
+                card.SetSelected(true);
+
+                _selectedCard = card;
             }
             else
             {
-                offset.x += offsetBetweenCards.x;
-            }
-
-            _cardsInHand[i].transform.localPosition = offset;
-
-            angle += step;
-            offsetBetweenCards.x += 1f;
-            offsetBetweenCards.z += 0.1f;
-
-            if (i == _cardsInHand.Count / 2)
-            {
-                offsetBetweenCards.x = 0f;
+                CleanSelectedCard();
             }
         }
+        else
+        {
+            CleanSelectedCard();
+        }
     }
+
+    #endregion
+
+
+    private void UpdateClickInteraction()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            UseSelectedCard();
+        }
+    }
+
+    private void CleanSelectedCard()
+    {
+        if (_selectedCard != null)
+        {
+            _selectedCard.SetSelected(false);
+            _selectedCard = null;
+        }
+    }
+
+    private void UseSelectedCard()
+    {
+        // Send Event to battle handler
+        GameEvents.OnUseCard.Invoke(_selectedCard.GetData());
+
+        HideHand();
+        CleanSelectedCard();
+    }
+
+    #endregion
 
     #region Helpers
 

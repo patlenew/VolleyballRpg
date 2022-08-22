@@ -14,6 +14,7 @@ public class BoardGrid : MonoBehaviour
 
     [Header("Camera Related")]
     [SerializeField] private Transform _cameraHelper;
+    [SerializeField] private Transform _playCardCameraHelper;
 
     private bool _init;
     private BoardTeam _team;
@@ -119,6 +120,35 @@ public class BoardGrid : MonoBehaviour
         _tiles = null;
     }
 
+    #region Battle Flow Related
+
+    public void SetCharactersSelectable(bool selectable)
+    {
+        for (int i = 0; i < _boardCharacters.Count; i++)
+        {
+            _boardCharacters[i].SetSelectable(selectable);
+        }
+    }
+
+    public void ShowMovingPossibilities(BoardCharacter character, int moveDistance)
+    {
+        int2 startIndex = GetTileIndexFromCharacter(character);
+
+        for (int x = -moveDistance; x < moveDistance; x++)
+        {
+            for (int y = -moveDistance; y < moveDistance; y++)
+            {
+                if (_tiles[x, y].IsEmpty())
+                {
+                    _tiles[x, y].SetSelectable(true);
+                }
+            }
+        }
+
+    }
+
+    #endregion
+
     #region Helpers
 
     public BoardSettings GetSettings()
@@ -139,9 +169,33 @@ public class BoardGrid : MonoBehaviour
         return tile;
     }
 
-    public Transform GetCameraHelper()
+    private int2 GetTileIndexFromCharacter(BoardCharacter character)
+    {
+        for (int x = 0; x < _tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < _tiles.GetLength(1); y++)
+            {
+                bool isRightCharacter = _tiles[x, y].GetCharacter() == character;
+
+                if (isRightCharacter)
+                {
+                    return new int2(x, y);
+                }
+            }
+        }
+
+        Debug.LogError("Could not find character on board -> " + character);
+        return new int2(-1, -1);
+    }
+
+    public Transform GetBaseCameraHelper()
     {
         return _cameraHelper;
+    }
+
+    public Transform GetPlayedCardCameraHelper()
+    {
+        return _playCardCameraHelper;
     }
 
     #endregion

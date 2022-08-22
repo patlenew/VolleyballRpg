@@ -9,7 +9,14 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private BoardSettings _enemyBoardSettings;
 
     // TO IMPLEMENT, try to find an available battle point around where the fight was declared on the world
-    [SerializeField] private Transform _battlePoint; 
+    [SerializeField] private Transform _battlePoint;
+
+    protected override void Init_Awake()
+    {
+        base.Init_Awake();
+
+        Layer.InitLayers();
+    }
 
     private void Update()
     {

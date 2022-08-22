@@ -13,7 +13,7 @@ public class BattleBoardHandler : MonoBehaviour
 
     // Could be part of team settings, to see
     [Header("Base Game Settings")]
-    [SerializeField] private int _goalPoint = 20;
+    [SerializeField] private int _goalScore = 20;
 
     [Header("Board Settings")]
     [SerializeField] private Transform _localBoardHelper;
@@ -27,18 +27,21 @@ public class BattleBoardHandler : MonoBehaviour
     private int _enemyScore;
     private BoardGrid _playerGrid;
     private BoardGrid _enemyGrid;
+    private BoardTile _currentBallTileGoal;
     private BattleSettings _battleSettings;
 
     private void Start()
     {
         GameEvents.OnStartFight.Register(OnStartBattle);
         GameEvents.OnUseCard.Register(OnUseCard);
+        GameEvents.OnSelectCharacter.Register(OnSelectCharacter);
     }
 
     private void OnDestroy()
     {
         GameEvents.OnStartFight.Remove(OnStartBattle);
         GameEvents.OnUseCard.Remove(OnUseCard);
+        GameEvents.OnSelectCharacter.Remove(OnSelectCharacter);
     }
 
     private void OnStartBattle(BattleSettings battleSettings)
@@ -111,6 +114,8 @@ public class BattleBoardHandler : MonoBehaviour
 
     private void PrepareTurn()
     {
+        MoveBallToMiddle();
+
         // Transition & Start Next Turn
         _turnHandler.PrepareTurn(GetBaseReflex(), GetStartTurnAction(), GetEndTurnAction());
 
@@ -134,13 +139,15 @@ public class BattleBoardHandler : MonoBehaviour
 
     private void OnStartTurnLocal()
     {
+        SetBallGoal(_playerGrid);
+
         GameEvents.OnStartTurn_Local.Invoke();
     }
 
     private void OnStartTurnEnemy()
     {
         // Allo!!!
-
+        SetBallGoal(_enemyGrid);
         Debug.Log("Ses ma tour");
 
         StartCoroutine(DelayTestEnemyTurn());
@@ -154,9 +161,95 @@ public class BattleBoardHandler : MonoBehaviour
         OnEndTurn();
     }
 
+    #region Battle Flow Related
+
+    // TO ADD: Cancel Move
+    // -- Other move types
+    // Make Possible to look at board, to plan next moves
+    // Ponder about use of command pattern to be able to rewind moves
+
     private void OnUseCard(CardData cardData)
     {
+        CameraManager.Instance.MoveTo(GetPlayCardCameraHelper(), 1f);
+
         _turnHandler.OnUseCard(cardData.GetReflexCost());
+
+        switch (cardData.type)
+        {
+            case CardType.Movement:
+                EnableCharacterSelection(_playerGrid);
+                break;
+
+            case CardType.Stats_Buff:
+                BuffStats(cardData);
+                break;
+        }
+    }
+
+    private void EnableCharacterSelection(BoardGrid grid)
+    {
+        BoardMouseHandler.Instance.SetSelecting(true);
+
+        grid.SetCharactersSelectable(true);
+    }
+
+    private void OnSelectCharacter(BoardCharacter character)
+    {
+        // Show Possibilities related to card used
+    }
+
+    private void BuffStats(CardData cardData)
+    {
+
+    }
+
+    #endregion
+
+    // After all reflex played (or end turn, the ball falls on the target chosen (either randomly or by the player if he played such card))
+    // After we end the turn
+    private void FallBall()
+    {
+        if (_currentBallTileGoal.IsEmpty())
+        {
+            // Current player loses points
+            
+        }
+        else
+        {
+            BoardCharacter character = _currentBallTileGoal.GetCharacter();
+            character.CatchBall(_ball, OnEndTurn);
+        }
+    }
+
+    private void OnCompleteFallBall()
+    {
+        if (_turnHandler.GetCurrentTurnOwner() == TurnOwner.Local)
+        {
+            _enemyScore++;
+        }
+        else
+        {
+            _playerScore++;
+        }
+
+        // Maybe split the score into their own events, to validate
+        GameEvents.OnScoreUpdate.Invoke(_playerScore, _enemyScore);
+    }
+
+    private void OnCheckScore()
+    {
+        if (_playerScore >= _goalScore)
+        {
+            Debug.Log("Player Wins!");
+
+            OnCompleteBattle();
+        }
+        else if (_enemyScore >= _goalScore)
+        {
+            Debug.Log("Enemy Wins!");
+
+            OnCompleteBattle();
+        }
     }
 
     private void OnEndTurn()
@@ -177,12 +270,12 @@ public class BattleBoardHandler : MonoBehaviour
 
     private void SetBallGoal(BoardGrid grid)
     {
-        BoardTile goalTile = grid.GetRandomTileForBall();
+        _currentBallTileGoal = grid.GetRandomTileForBall();
     }
 
     #endregion
 
-
+    // TODO: Clean up boards, enable moving again
     private void OnCompleteBattle()
     {
         _battleSettings.Local.Show();
@@ -235,7 +328,12 @@ public class BattleBoardHandler : MonoBehaviour
 
     private Transform GetCameraHelper()
     {
-        return _turnHandler.GetCurrentTurnOwner() == TurnOwner.Local ? _playerGrid.GetCameraHelper() : _enemyGrid.GetCameraHelper();
+        return _turnHandler.GetCurrentTurnOwner() == TurnOwner.Local ? _playerGrid.GetBaseCameraHelper() : _enemyGrid.GetBaseCameraHelper();
+    }
+
+    private Transform GetPlayCardCameraHelper()
+    {
+        return _turnHandler.GetCurrentTurnOwner() == TurnOwner.Local ? _playerGrid.GetPlayedCardCameraHelper() : _enemyGrid.GetPlayedCardCameraHelper();
     }
 
     private int GetBaseReflex()

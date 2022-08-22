@@ -11,9 +11,12 @@ public static class GameEvents
     public static GameEvent<BattleSettings> OnStartFight = new GameEvent<BattleSettings>();
     public static GameEvent<DeckData> PrepareDeck = new GameEvent<DeckData>();
     public static GameEvent<CardData> OnUseCard = new GameEvent<CardData>();
+    public static GameEvent<BoardCharacter> OnSelectCharacter = new GameEvent<BoardCharacter>();
 
     public static GameEvent<Type> SpriteHUD_Show = new GameEvent<Type>();
     public static GameEvent<Type> SpriteHUD_Hide = new GameEvent<Type>();
+
+    public static GameEvent<int, int> OnScoreUpdate = new GameEvent<int, int>();
 
     public static GameEvent OnStartTurn_Local = new GameEvent();
     public static GameEvent OnStartTurn_Enemy = new GameEvent();

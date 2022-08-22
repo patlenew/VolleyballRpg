@@ -11,7 +11,7 @@ public class CameraManager : Singleton<CameraManager>
     [SerializeField] private Transform _cameraParent;
     [SerializeField] private Transform _spriteHudHelper;
 
-    private Camera camera => Camera.main;
+    public Camera camera => Camera.main;
 
     protected override void Init_Awake()
     {
